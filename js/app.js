@@ -26,6 +26,7 @@ const activeSection = 'active-section'
 const allSections = document.querySelectorAll('main > section')
 const allNavigation = document.getElementById('navbar__list')
 
+// Initialize App.
 appInit(allSections)
 /**
  * End Global Variables
@@ -41,6 +42,12 @@ function appInit(sections) {
     }
 }
 
+function resetSection() {
+    allSections.forEach(element => {
+        element.classList.remove('active__section')
+    })
+}
+
 /**
  * End Helper Functions
  * Begin Main Functions
@@ -49,14 +56,22 @@ function appInit(sections) {
 
 // build the nav
 function buildNav(id, title) {
-    console.log(id, title)
+    let navItem = document.createElement('li')
+    let navLink = document.createElement('a')
+    navLink.innerHTML = title
+    navLink.dataset.nav = id
+    navLink.classList.add('menu__link')
+    navLink.href = '#' + id
+    navLink.onclick = scrollToSection
+    navItem.append(navLink)
+    allNavigation.append(navItem)
 }
-
-// Add class 'active' to section when near top of viewport
 
 
 // Scroll to anchor ID using scrollTO event
-
+function scrollToAnchor(sectionOffset) {
+    window.scrollTo(0, sectionOffset)
+}
 
 /**
  * End Main Functions
@@ -67,5 +82,15 @@ function buildNav(id, title) {
 // Build menu 
 
 // Scroll to section on link click
+function scrollToSection(e) {
+    e.preventDefault()
+    resetSection()
+    let section = document.getElementById(e.target.dataset.nav)
+    setSectionActive(section)
+    scrollToAnchor(section.offsetTop)
+}
 
 // Set sections as active
+function setSectionActive(sectionElement) {
+    sectionElement.classList.add('active__section')
+}
