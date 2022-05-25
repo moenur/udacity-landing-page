@@ -1,96 +1,97 @@
-/**
- * 
- * Manipulating the DOM exercise.
- * Exercise programmatically builds navigation,
- * scrolls to anchors from navigation,
- * and highlights section in viewport upon scrolling.
- * 
- * Dependencies: None
- * 
- * JS Version: ES2015/ES6
- * 
- * JS Standard: ESlint
- * 
- */
+// Global Variables
+let menu = [];
+let sections = ['section1', 'section2', 'section3', 'section4'];
+let currentSection = null;
+//End Global Variables
 
-/**
- * Comments should be present at the beginning of each procedure and class.
- * Great to have comments before crucial code sections within the procedure.
- */
 
-/**
- * Define Global Variables
- * 
- */
-const activeSection = 'active-section'
-const allSections = document.querySelectorAll('main > section')
-const allNavigation = document.getElementById('navbar__list')
+// Start Helper Functions to build navagation
+function buildNav() {
 
-// Initialize App.
-appInit(allSections)
-/**
- * End Global Variables
- * Start Helper Functions
- * 
- */
+    menu.forEach(el => {
+        attachMenuItem(el.element, el.title)
+    })
+}
+//End Helper Functions
 
-function appInit(sections) {
-    if (sections.length > 0) {
-        sections.forEach(element => {
-            buildNav(element.id, element.dataset.nav)
-        });
+// Main function to build list item for navagation 
+function attachMenuItem(element, title) {
+
+    let navs = document.querySelector('#navbar__list')
+
+    let navItem = document.createElement('li')
+    let navAnchor = document.createElement('a')
+
+    // set attributes and eventlistener for nav item.
+    navAnchor.setAttribute('class', 'menu__link')
+    navAnchor.setAttribute('data-nav', title)
+    navAnchor.setAttribute('data-id', element.id)
+    navAnchor.addEventListener('click', navClick)
+    navAnchor.innerHTML = `${title}`;
+
+    navItem.appendChild(navAnchor)
+    navs.appendChild(navItem)
+}
+//End Main function to build list item for navagation
+
+// Scroll to section on link click
+function navClick(e) {
+    e.preventDefault()
+    let {
+        id
+    } = e.target.dataset
+
+    // bail out if section already selected
+    if (currentSection === id) {
+        return
     }
+
+    currentSection = id
+
+    scrollToSection(id)
+}
+// End of Scroll to section on link click.
+
+// Scroll to anchor ID using scrollTO event
+function scrollToSection(id) {
+    let element = document.getElementById(id)
+    element.scrollIntoView();
+    shadeSection(id)
 }
 
-function resetSection() {
-    allSections.forEach(element => {
-        element.classList.remove('active__section')
+//Shade scrolled to section.
+function shadeSection(id) {
+
+    // iterate our sections and remove or add active class
+    sections.forEach(elId => {
+        let el = document.getElementById(elId)
+
+        el.classList.remove('section-active')
+
+        // add class for selection section
+        if (id === elId) {
+            el.classList.add('section-active')
+        }
     })
 }
 
-/**
- * End Helper Functions
- * Begin Main Functions
- * 
- */
-
-// build the nav
-function buildNav(id, title) {
-    let navItem = document.createElement('li')
-    let navLink = document.createElement('a')
-    navLink.innerHTML = title
-    navLink.dataset.nav = id
-    navLink.classList.add('menu__link')
-    navLink.href = '#' + id
-    navLink.onclick = scrollToSection
-    navItem.append(navLink)
-    allNavigation.append(navItem)
+// Gets section and turns to an object.
+function getSection(id) {
+    let section = document.getElementById(id)
+    return {
+        element: section,
+        title: section.dataset.nav
+    }
 }
 
+// initialize application.
+function init() {
+    // iterate section id to prepare menu items
+    sections.forEach(id => {
+        menu.push(getSection(id))
+    })
 
-// Scroll to anchor ID using scrollTO event
-function scrollToAnchor(sectionOffset) {
-    window.scrollTo(0, sectionOffset)
+    buildNav()
 }
-
-/**
- * End Main Functions
- * Begin Events
- * 
- */
-
-// Build menu 
-
-// Scroll to section on link click
-function scrollToSection(e) {
-    e.preventDefault()
-    resetSection()
-    let section = document.getElementById(e.target.dataset.nav)
-    setSectionActive(section)
-    scrollToAnchor(section.offsetTop)
-}
-
-// Set sections as active
-function setSectionActive(sectionElement) {
-    sectionElement.classList.add('active__section')
-}
+// invoke initialize application.
+init()
