@@ -1,6 +1,6 @@
 // Global Variables
 let menu = [];
-let sections = ['section1', 'section2', 'section3', 'section4'];
+let sections = [];
 let currentSection = null;
 //End Global Variables
 
@@ -47,7 +47,7 @@ function navClick(e) {
     }
 
     currentSection = id
-
+    setActiveNav(id)
     scrollToSection(id)
 }
 // End of Scroll to section on link click.
@@ -84,8 +84,35 @@ function getSection(id) {
     }
 }
 
+// Get all Section in main element. 
+function getAllSections() {
+    let sectionElements = document.querySelectorAll('main > section')
+    sectionElements.forEach(sec => {
+        sections.push(sec.id)
+    })
+}
+
+// Set active nav. 
+function setActiveNav(id) {
+    let navElements = document.querySelectorAll('ul#navbar__list > li')
+    navElements.forEach(navEl => {
+        navEl.childNodes.forEach(nv => {
+
+            nv.classList.remove('menu__link-active')
+
+            if (nv.dataset.id === id) {
+                nv.classList.add('menu__link-active')
+            }
+        })
+    })
+}
+
+
 // initialize application.
 function init() {
+    // setup sections
+    getAllSections()
+
     // iterate section id to prepare menu items
     sections.forEach(id => {
         menu.push(getSection(id))
