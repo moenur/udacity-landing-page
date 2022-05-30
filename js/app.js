@@ -55,7 +55,9 @@ function navClick(e) {
 // Scroll to anchor ID using scrollTO event
 function scrollToSection(id) {
     let element = document.getElementById(id)
-    element.scrollIntoView();
+    element.scrollIntoView({
+        behavior: "smooth"
+    });
     shadeSection(id)
 }
 
